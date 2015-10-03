@@ -24,29 +24,100 @@ namespace QBox
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        public static MainPage Current;
+        public BoxClient Client { get; set; }
+
+        public List<PageItem> Pages
+        {
+            get { return this.pages; }
+        }
+
         public MainPage()
         {
             this.InitializeComponent();
             this.Client = new BoxClient();
-            ProgressBar.DataContext = Client;
+            Current = this;
         }
 
-        private async void button_Click(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var picker = new FileOpenPicker();
-            picker.ViewMode = PickerViewMode.List;
-            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.Add(".txt");
+            // Populate the scenario list from the SampleConfiguration.cs file
+            PageControl.ItemsSource = pages;
+            if (Window.Current.Bounds.Width < 640)
+            {
+                PageControl.SelectedIndex = -1;
+            }
+            else
+            {
+                PageControl.SelectedIndex = 0;
+            }
+        }
+        
+        private void PageControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            NotifyUser(String.Empty, NotifyType.StatusMessage);
 
-            StorageFile file = await picker.PickSingleFileAsync();
-            Client.UploadFileAsync(file);
+            ListBox pageListBox = sender as ListBox;
+            PageItem page = pageListBox.SelectedItem as PageItem;
+            if (page != null)
+            {
+                PageFrame.Navigate(page.ClassType);
+                if (Window.Current.Bounds.Width < 640)
+                {
+                    Splitter.IsPaneOpen = false;
+                }
+            }
         }
 
-        public BoxClient Client { get; set; }
-
-        private void ProgressBar_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        private void ToggleButton_Click(object sender, RoutedEventArgs e)
         {
-            ProgressBar.Value = ((BoxClient)sender).Progress;
+            Splitter.IsPaneOpen = !Splitter.IsPaneOpen;
+        }
+
+        public enum NotifyType
+        {
+            StatusMessage,
+            ErrorMessage
+        };
+
+        public void NotifyUser(string strMessage, NotifyType type)
+        {
+            switch (type)
+            {
+                case NotifyType.StatusMessage:
+                    StatusBorder.Background = new SolidColorBrush(Windows.UI.Colors.Green);
+                    break;
+                case NotifyType.ErrorMessage:
+                    StatusBorder.Background = new SolidColorBrush(Windows.UI.Colors.Red);
+                    break;
+            }
+            StatusBlock.Text = strMessage;
+
+            StatusBorder.Visibility = (StatusBlock.Text != String.Empty) ? Visibility.Visible : Visibility.Collapsed;
+            if (StatusBlock.Text != String.Empty)
+            {
+                StatusBorder.Visibility = Visibility.Visible;
+                StatusPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                StatusBorder.Visibility = Visibility.Collapsed;
+                StatusPanel.Visibility = Visibility.Collapsed;
+            }
+        }
+    }
+
+    public class PageBindingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            PageItem page = value as PageItem;
+            return MainPage.Current.Pages.IndexOf(page) + 1 + ")" + page.Title;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return true;
         }
     }
 }
