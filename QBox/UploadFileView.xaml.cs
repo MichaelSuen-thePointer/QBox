@@ -22,15 +22,51 @@ namespace QBox
     /// </summary>
     public sealed partial class UploadFileView : Page
     {
+        public BoxClient Client;
+
         public UploadFileView()
         {
             this.InitializeComponent();
+            this.Client = MainPage.Client;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
 
 
+        }
+
+        private void UploadedItemList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class ExpirationTimeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var expiration = (FileExpiration.ExpirationTime)value;
+            switch (expiration)
+            {
+                case FileExpiration.ExpirationTime.OneHour:
+                    return "一小时";
+                case FileExpiration.ExpirationTime.OneDay:
+                    return "一天";
+                case FileExpiration.ExpirationTime.FiveDays:
+                    return "五天";
+                case FileExpiration.ExpirationTime.TenDays:
+                    return "十天";
+                case FileExpiration.ExpirationTime.ThirtyDays:
+                    return "三十天";
+                default:
+                    throw new ArgumentException($"Invalid Expiration of {expiration}");
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return true;
         }
     }
 }

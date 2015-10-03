@@ -7,6 +7,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <local:ExpirationTimeConverter x:Key="ExpirationConverter"/>
+    </UserControl.Resources>
+
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -24,7 +28,29 @@
                     点击文件进行进一步操作，已过期的文件会被自动删除
                 </TextBlock>
 
-                <StackPanel x:Name="UploadedFilePanel"/>
+                <ListView x:Name="UploadedItemList" SelectionChanged="UploadedItemList_SelectionChanged"
+                          SelectionMode="Single" HorizontalAlignment="Left" Background="Transparent" BorderThickness="0"
+                          VerticalAlignment="Top" RelativePanel.Below="SampleTitle" Margin="0,10,0,0" RelativePanel.Above="FooterPanel"
+                          ItemsSource="{x:Bind Client.UploadFileList}" Width="Auto">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:UploadFile">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name = "FileNameGrid"></ColumnDefinition>
+                                    <ColumnDefinition x:Name = "TokenGrid"></ColumnDefinition>
+                                    <ColumnDefinition x:Name = "ExpirationGrid"></ColumnDefinition>
+                                    <ColumnDefinition x:Name = "ProgressGrid"></ColumnDefinition>
+                                    <ColumnDefinition x:Name = "ButtonGrid"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column = "0" Margin="5,0,5,0" Text ="{x:Bind FileName}" Style="{StaticResource BodyTextBlockStyle}"></TextBlock>
+                                <TextBlock Grid.Column = "1" Margin="5,0,5,0" Text ="{x:Bind Token}"></TextBlock>
+                                <TextBlock Grid.Column = "2" Margin="5,0,5,0" Text ="{x:Bind Expiration, Converter={StaticResource ExpirationConverter}}"></TextBlock>
+                                <ProgressBar Grid.Column="3" Margin="5,0,5,0" Value="{x:Bind Progress}" MinWidth="50"></ProgressBar>
+                                <Button Grid.Column="4" Margin="5,0,5,0" x:Name="ExecuteButton" Visibility=""></Button>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
 
             </StackPanel>
         </ScrollViewer>

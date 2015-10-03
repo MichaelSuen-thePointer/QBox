@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Json;
@@ -17,12 +18,16 @@ namespace QBox
         private static string BoxGetUrl = "http://box.zjuqsc.com/item/get";
 
         private readonly HttpClient BoxHttpClient;
-        public List<UploadFile> UploadFileList { get; }
-        public List<DownloadFile> DownloadFileList { get; }
+
+        public ObservableCollection<UploadFile> UploadFileList { get; }
+
+        public ObservableCollection<DownloadFile> DownloadFileList { get; }
+
         public BoxClient()
         {
             BoxHttpClient = new HttpClient();
-            UploadFileList = new List<UploadFile>();
+            UploadFileList = new ObservableCollection<UploadFile>();
+            DownloadFileList = new ObservableCollection<DownloadFile>();
         }
 
         public async void UploadFileAsync(StorageFile file)
@@ -31,8 +36,8 @@ namespace QBox
             HttpStreamContent fileStream = new HttpStreamContent(fileContent);
             HttpMultipartFormDataContent formData = new HttpMultipartFormDataContent { { fileStream, "file", file.Path } };
             var asyncOperation = BoxHttpClient.PostAsync(new Uri(BoxUploadUrl), formData);
-            int index = UploadFileList.AddEntry(file, DateTime.Now, asyncOperation);
-            UploadFileList[index].StartUpload();
+            UploadFileList.Add(new UploadFile(file, DateTime.Now, asyncOperation));
+            UploadFileList.Last().StartUpload();
         }
 
         public async void EditFileInfoAsync(int entryIndex, string newToken, string newExpiration)
@@ -62,8 +67,8 @@ namespace QBox
         public void DownloadFileAsync(string token)
         {
             var downloadOperation = BoxHttpClient.GetAsync(new Uri(BoxGetUrl + "/" + token));
-            var index = DownloadFileList.AddEntry(token, downloadOperation);
-            DownloadFileList[index].StartDownload();
+            DownloadFileList.Add(new DownloadFile(token, downloadOperation));
+            DownloadFileList.Last().StartDownload();
         }
 
         ~BoxClient()

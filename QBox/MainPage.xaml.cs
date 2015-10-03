@@ -25,7 +25,7 @@ namespace QBox
     public sealed partial class MainPage : Page
     {
         public static MainPage Current;
-        public BoxClient Client { get; set; }
+        public static BoxClient Client { get; set; }
 
         public List<PageItem> Pages
         {
@@ -35,7 +35,7 @@ namespace QBox
         public MainPage()
         {
             this.InitializeComponent();
-            this.Client = new BoxClient();
+            Client = new BoxClient();
             Current = this;
         }
 

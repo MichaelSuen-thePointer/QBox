@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Data.Json;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Web.Http;
+using QBox.Annotations;
 using HttpStatusCode = Windows.Web.Http.HttpStatusCode;
 
 namespace QBox
@@ -68,14 +71,65 @@ namespace QBox
         }
     }
 
-    public class UploadFile
+    public class UploadFile : INotifyPropertyChanged
     {
         public readonly string FileName;
         public readonly DateTime UploadTime;
-        public double Progress { get; private set; }
-        public string SecureId { get; private set; }
-        public string Token { get; private set; }
-        public FileExpiration Expiration { get; private set; }
+
+        private double _progress;
+        public double Progress
+        {
+            get { return _progress; }
+            private set
+            {
+                _progress = value;
+                OnPropertyChanged(nameof(Progress));
+            }
+        }
+
+        private string _secureId;
+
+        public string SecureId
+        {
+            get
+            {
+                return _secureId;
+            }
+            private set
+            {
+                _secureId = value;
+                OnPropertyChanged(nameof(SecureId));
+            }
+        }
+
+        private string _token;
+        public string Token
+        {
+            get
+            {
+                return _token;
+            }
+            private set
+            {
+                _token = value;
+                OnPropertyChanged(nameof(Token));
+            }
+        }
+
+        private FileExpiration _expiration;
+        public FileExpiration Expiration
+        {
+            get
+            {
+                return _expiration;
+            }
+            private set
+            {
+                _expiration = value;
+                OnPropertyChanged(nameof(Expiration));
+            }
+        }
+
         public readonly IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> UploadOperation;
         public UploadFile(StorageFile file, DateTime uploadTime, IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> uploadOperation)
         {
@@ -127,6 +181,14 @@ namespace QBox
         {
             return
                 $"File: {FileName}, Upload Time: {UploadTime}, Expiration Time Span: {Expiration.ExpirationSpan}, Token: {Token}";
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 
