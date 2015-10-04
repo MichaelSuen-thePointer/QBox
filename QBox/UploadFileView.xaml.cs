@@ -89,6 +89,7 @@ namespace QBox
 
         private async void SubmitChange_OnClick(object sender, RoutedEventArgs e)
         {
+            
             /*
             UploadFile choseFile = UploadedItems.SelectedItem as UploadFile;
             FileExpiration newExpiration =
