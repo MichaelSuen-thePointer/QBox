@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using Windows.Web.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -25,7 +27,9 @@ namespace QBox
     public sealed partial class MainPage : Page
     {
         public static MainPage Current;
-        public BoxClient Client { get; set; }
+        public ObservableCollection<UploadFile> UploadFileList { get; } = new ObservableCollection<UploadFile>();
+        public ObservableCollection<DownloadFile> DownloadFileList { get; } = new ObservableCollection<DownloadFile>();
+        public readonly HttpClient BoxClient = new HttpClient();
 
         public List<PageItem> Pages
         {
@@ -35,7 +39,6 @@ namespace QBox
         public MainPage()
         {
             this.InitializeComponent();
-            this.Client = new BoxClient();
             Current = this;
         }
 
@@ -55,8 +58,6 @@ namespace QBox
         
         private void PageControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            NotifyUser(String.Empty, NotifyType.StatusMessage);
-
             ListBox pageListBox = sender as ListBox;
             PageItem page = pageListBox.SelectedItem as PageItem;
             if (page != null)
@@ -74,12 +75,6 @@ namespace QBox
             Splitter.IsPaneOpen = !Splitter.IsPaneOpen;
         }
 
-        public enum NotifyType
-        {
-            StatusMessage,
-            ErrorMessage
-        };
-
         public void NotifyUser(string strMessage, NotifyType type)
         {
             switch (type)
@@ -93,6 +88,7 @@ namespace QBox
             }
             StatusBlock.Text = strMessage;
 
+            // Collapse the StatusBlock if it has no text to conserve real estate.
             StatusBorder.Visibility = (StatusBlock.Text != String.Empty) ? Visibility.Visible : Visibility.Collapsed;
             if (StatusBlock.Text != String.Empty)
             {
@@ -106,6 +102,12 @@ namespace QBox
             }
         }
     }
+
+    public enum NotifyType
+    {
+        StatusMessage,
+        ErrorMessage
+    };
 
     public class PageBindingConverter : IValueConverter
     {

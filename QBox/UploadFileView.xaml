@@ -5,28 +5,45 @@
     xmlns:local="using:QBox"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
-
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled">
+    <Page.Resources>
+        <local:ExpirationBindingConverter x:Key="ExpirationConverter"></local:ExpirationBindingConverter>
+    </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <StackPanel Margin="0,0,0,10">
-            <TextBlock Text="已上传文件" Style="{StaticResource HeaderTextBlockStyle}"/>
-            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" TextWrapping="Wrap">
-                有效期内的所有文件
-            </TextBlock>
-        </StackPanel>
-        <ScrollViewer Grid.Row="1" VerticalScrollMode="Auto" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
-                <TextBlock TextWrapping="Wrap" Style="{StaticResource BodyTextBlockStyle}">
-                    点击文件进行进一步操作，已过期的文件会被自动删除
-                </TextBlock>
-
-                <StackPanel x:Name="UploadedFilePanel"/>
-
+        <ListBox x:Name="UploadedItems" Grid.Row="0" ItemsSource="{x:Bind rootPage.UploadFileList}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible"
+                 SelectionChanged="UploadedItems_OnSelectionChanged_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="local:UploadFile">
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <SymbolIcon Symbol="OpenFile" Margin="0,0,12,0"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind FileName}" FontWeight="Bold" Margin="0,0,12,0" Width="200"/>
+                            <TextBlock Text="{x:Bind Expiration, Converter = {StaticResource ExpirationConverter}}" Margin="0,0,12,0" MinWidth="50"/>
+                            <TextBlock Text="{x:Bind Token}" Margin="0,0,12,0"/>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel x:Name="EditView" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
+                <RadioButton x:Name="PT1H" GroupName="expiration" Content="一小时"  />
+                <RadioButton x:Name="P1D" GroupName="expiration" Content="一天"    />
+                <RadioButton x:Name="P5D" GroupName="expiration" Content="五天"    />
+                <RadioButton x:Name="P10D" GroupName="expiration" Content="十天"   />
+                <RadioButton x:Name="P30D" GroupName="expiration" Content="三十天" />
             </StackPanel>
-        </ScrollViewer>
+            <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
+                <TextBlock Style ="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Center">新的提取码</TextBlock>
+                <TextBox x:Name="NewTokenBox" MinWidth="200" Margin ="5" Style ="{StaticResource AutoSuggestBoxTextBoxStyle}"></TextBox>
+                <Button x:Name="SubmitChange" Content="提交更改" Margin="5" Style ="{StaticResource TextBlockButtonStyle}" HorizontalAlignment="Center" FontSize="32" Click="SubmitChange_OnClick"></Button>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Page>

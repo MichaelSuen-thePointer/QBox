@@ -25,7 +25,7 @@ namespace QBox
             public int ErrorCode;
             public string Token;
             public string Url;
-            public FileExpiration Expiration;
+            public string ErrorMessage;
         }
 
         public static async Task<UploadResponse> ParseUploadResponseAsync(IHttpContent response)
@@ -52,13 +52,13 @@ namespace QBox
             int errorCode = (int)jsonObject["status"].GetNumber();
             string newToken = jsonObject["new_token"].GetString();
             string url = jsonObject["url"].GetString();
-            string expiration = jsonObject["expiration"].GetString();
+            string errorMessage = jsonObject["message"].GetString();
             return new EditResponse
             {
                 ErrorCode = errorCode,
                 Token = newToken,
                 Url = url,
-                Expiration = new FileExpiration(expiration)
+                ErrorMessage = errorMessage
             };
         }
     }

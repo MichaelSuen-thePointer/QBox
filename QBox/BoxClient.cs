@@ -10,6 +10,7 @@ using HttpStatusCode = Windows.Web.Http.HttpStatusCode;
 
 namespace QBox
 {
+    /*
     public class BoxClient : IDisposable
     {
         private static string BoxUploadUrl = "http://box.zjuqsc.com/item/add_item";
@@ -76,4 +77,5 @@ namespace QBox
             BoxHttpClient.Dispose();
         }
     }
+    */
 }

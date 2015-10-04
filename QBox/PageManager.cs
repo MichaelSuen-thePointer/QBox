@@ -8,8 +8,9 @@ namespace QBox
     {
         public readonly List<PageItem> pages = new List<PageItem>
         {
-            new PageItem() {Title = "Upload Files", ClassType = typeof(UploadFileView)},
-            new PageItem() {Title = "Download Files", ClassType = typeof(DownloadFile)}
+            new PageItem() {Title = "主页", ClassType = typeof(StartPage)},
+            new PageItem() {Title = "已上传文件", ClassType = typeof(UploadFileView)},
+            //new PageItem() {Title = "已下载文件", ClassType = typeof(DownloadFileView)}
         };
     }
 

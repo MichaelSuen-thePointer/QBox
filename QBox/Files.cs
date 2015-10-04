@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using Windows.Devices.Sensors;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Web.Http;
@@ -72,39 +73,17 @@ namespace QBox
     {
         public readonly string FileName;
         public readonly DateTime UploadTime;
-        public double Progress { get; private set; }
         public string SecureId { get; private set; }
         public string Token { get; private set; }
         public FileExpiration Expiration { get; private set; }
-        public readonly IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> UploadOperation;
-        public UploadFile(StorageFile file, DateTime uploadTime, IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> uploadOperation)
+
+        public UploadFile(StorageFile file, DateTime uploadTime, string secureId, string token, FileExpiration expiration )
         {
             FileName = file.Name;
             UploadTime = uploadTime;
-            Progress = 0;
-            UploadOperation = uploadOperation;
-            UploadOperation.Progress = (message, progress) =>
-            {
-                if (progress.TotalBytesToSend == null) return;
-                Progress = (100.0 * progress.BytesSent / progress.TotalBytesToSend) ?? 0;
-            };
-        }
-
-        public async void StartUpload()
-        {
-            var uploadResponse = await UploadOperation;
-            ResponseParser.UploadResponse response = await ResponseParser.ParseUploadResponseAsync(uploadResponse.Content);
-            SecureId = response.SecureId;
-            Token = response.Token;
-            Expiration = response.Expiration;
-        }
-
-        public void CancelUpload()
-        {
-            if (UploadOperation.Status == AsyncStatus.Started)
-            {
-                UploadOperation.Cancel();
-            }
+            SecureId = secureId;
+            Token = token;
+            Expiration = expiration;
         }
 
         public bool IsExpired()
@@ -194,7 +173,7 @@ namespace QBox
             return LocalStorage.IsAvailable;
         }
     }
-
+/*
     public static class FileListExtension
     {
         public static int AddEntry(this List<UploadFile> fileList, StorageFile file, DateTime uploadTime, IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> operation)
@@ -227,4 +206,5 @@ namespace QBox
             }
         }
     }
+*/
 }
