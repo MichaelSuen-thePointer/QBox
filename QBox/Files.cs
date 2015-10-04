@@ -88,7 +88,7 @@ namespace QBox
         }
 
         private string _secureId;
-
+        
         public string SecureId
         {
             get
