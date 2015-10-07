@@ -33,11 +33,11 @@
         </ListBox>
         <StackPanel x:Name="EditView" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10">
-                <RadioButton x:Name="PT1H" GroupName="expiration" Content="一小时"  />
-                <RadioButton x:Name="P1D" GroupName="expiration" Content="一天"    />
-                <RadioButton x:Name="P5D" GroupName="expiration" Content="五天"    />
-                <RadioButton x:Name="P10D" GroupName="expiration" Content="十天"   />
-                <RadioButton x:Name="P30D" GroupName="expiration" Content="三十天" />
+                <RadioButton x:Name="PT1H" GroupName="expiration" Content="一小时" Checked="ExpirationRadioGroup_Checked"/>
+                <RadioButton x:Name="P1D" GroupName="expiration" Content="一天"    Checked="ExpirationRadioGroup_Checked"/>
+                <RadioButton x:Name="P5D" GroupName="expiration" Content="五天"    Checked="ExpirationRadioGroup_Checked"/>
+                <RadioButton x:Name="P10D" GroupName="expiration" Content="十天"   Checked="ExpirationRadioGroup_Checked"/>
+                <RadioButton x:Name="P30D" GroupName="expiration" Content="三十天" Checked="ExpirationRadioGroup_Checked"/>
             </StackPanel>
             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10">
                 <TextBlock Style ="{StaticResource BodyTextBlockStyle}" HorizontalAlignment="Center">新的提取码</TextBlock>

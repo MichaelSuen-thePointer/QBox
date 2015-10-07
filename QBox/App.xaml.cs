@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -8,6 +9,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.Storage.Search;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -63,7 +65,7 @@ namespace QBox
 
                 if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
                 {
-                    //TODO: 从之前挂起的应用程序加载状态
+                    //TODO: 这里恢复应用数据
                 }
 
                 // 将框架放在当前窗口中
@@ -101,7 +103,9 @@ namespace QBox
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: 保存应用程序状态并停止任何后台活动
+
+            //TODO: 这里保存应用数据
+            
             deferral.Complete();
         }
     }

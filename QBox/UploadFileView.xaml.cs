@@ -29,6 +29,7 @@ namespace QBox
     {
         private static string BoxEditUrl = "http://box.zjuqsc.com/item/change_item";
         public MainPage rootPage = MainPage.Current;
+        private string newExpiration;
 
         public UploadFileView()
         {
@@ -63,6 +64,10 @@ namespace QBox
 
         private void UpdateEditView(UploadFile file)
         {
+            if (file == null)
+            {
+                return;
+            }
             EditView.Visibility = Visibility.Visible;
             switch (file.Expiration.Expiration)
             {
@@ -87,18 +92,29 @@ namespace QBox
             NewTokenBox.Text = file.Token;
         }
 
+        private void ExpirationRadioGroup_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton button = sender as RadioButton;
+            newExpiration = button?.Name;
+        }
+
         private async void SubmitChange_OnClick(object sender, RoutedEventArgs e)
         {
-            
-            /*
+            if (UploadedItems.SelectedItem == null)
+            {
+                return;
+            }
+            if (NewTokenBox.Text == string.Empty)
+            {
+                rootPage.NotifyUser("必须输入提取码，不修改提取码请输入原来的", NotifyType.ErrorMessage);
+            }
             UploadFile choseFile = UploadedItems.SelectedItem as UploadFile;
-            FileExpiration newExpiration =
             List < KeyValuePair < string, string>> requestContents = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("new_token", NewTokenBox.Text),
-                new KeyValuePair<string, string>("old_token", choseFile?.Token),
-                new KeyValuePair<string, string>("expiration", "P30D"),
-                new KeyValuePair<string, string>("secure_id", choseFile?.SecureId)
+                new KeyValuePair<string, string>("old_token", choseFile.Token),
+                new KeyValuePair<string, string>("expiration", newExpiration),
+                new KeyValuePair<string, string>("secure_id", choseFile.SecureId)
             };
             HttpFormUrlEncodedContent formData = new HttpFormUrlEncodedContent(requestContents);
 
@@ -110,7 +126,10 @@ namespace QBox
                     await ResponseParser.ParseEditResponseAsync(responseMessage.Content);
                 if (response.ErrorCode == 0)
                 {
-                    choseFile.EditInfo(response.Token, response.Expiration);
+                    UploadFile changedFile = new UploadFile(choseFile.FileName, choseFile.UploadTime, choseFile.SecureId, NewTokenBox.Text, new FileExpiration(newExpiration));
+                    rootPage.UploadFileList.Remove(choseFile);
+                    rootPage.UploadFileList.Add(changedFile);
+                    rootPage.NotifyUser("修改成功", NotifyType.ErrorMessage);
                 }
                 else
                 {
@@ -121,33 +140,7 @@ namespace QBox
             {
                 rootPage.NotifyUser("网络连接错误", NotifyType.ErrorMessage);
             }
-            */
         }
-        /*
-        string GetRadioButtonSelection()
-        {
-            if (PT1H.IsChecked)
-            {
-                return "PT1H";
-            }
-            if (P1D.IsChecked)
-            {
-                return "P1D";
-            }
-            if (P5D.IsChecked)
-            {
-                return "P5D";
-            }
-            break;
-                case FileExpiration.ExpirationTime.FiveDays:
-                    P5D.IsChecked = true;
-            break;
-                case FileExpiration.ExpirationTime.TenDays:
-                    P10D.IsChecked = true;
-            break;
-                case FileExpiration.ExpirationTime.ThirtyDays:
-                    P30D.IsChecked = true;
-        }*/
     }
 
     public class ExpirationBindingConverter : IValueConverter

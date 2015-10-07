@@ -16,6 +16,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 
 //“空白页”项模板在 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 上有介绍
 
@@ -27,8 +29,8 @@ namespace QBox
     public sealed partial class MainPage : Page
     {
         public static MainPage Current;
-        public ObservableCollection<UploadFile> UploadFileList { get; } = new ObservableCollection<UploadFile>();
-        public ObservableCollection<DownloadFile> DownloadFileList { get; } = new ObservableCollection<DownloadFile>();
+        public ObservableCollection<UploadFile> UploadFileList { get; set; } = new ObservableCollection<UploadFile>();
+        public ObservableCollection<DownloadFile> DownloadFileList { get; set; } = new ObservableCollection<DownloadFile>();
         public readonly HttpClient BoxClient = new HttpClient();
 
         public List<PageItem> Pages
@@ -101,6 +103,13 @@ namespace QBox
                 StatusPanel.Visibility = Visibility.Collapsed;
             }
         }
+
+        public async void OnSuspending(object sender, SuspendingEventArgs args)
+        {
+            
+        }
+
+        
     }
 
     public enum NotifyType
@@ -122,4 +131,7 @@ namespace QBox
             return true;
         }
     }
+
+    
+
 }

@@ -86,6 +86,15 @@ namespace QBox
             Expiration = expiration;
         }
 
+        public UploadFile(string fileName, DateTime uploadTime, string secureId, string token, FileExpiration expiration)
+        {
+            FileName = fileName;
+            UploadTime = uploadTime;
+            SecureId = secureId;
+            Token = token;
+            Expiration = expiration;
+        }
+
         public bool IsExpired()
         {
             return DateTime.Now - UploadTime > Expiration.ExpirationSpan;
@@ -101,12 +110,7 @@ namespace QBox
         {
             return this.SecureId.GetHashCode();
         }
-
-        public override string ToString()
-        {
-            return
-                $"File: {FileName}, Upload Time: {UploadTime}, Expiration Time Span: {Expiration.ExpirationSpan}, Token: {Token}";
-        }
+        
     }
 
     public class DownloadFile
