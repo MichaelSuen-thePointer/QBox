@@ -18,12 +18,12 @@ namespace QBox
         private static string BoxGetUrl = "http://box.zjuqsc.com/item/get";
 
         private readonly HttpClient BoxHttpClient;
-        public List<UploadFile> UploadFileList { get; }
+        public List<UploadedFile> UploadFileList { get; }
         public List<DownloadFile> DownloadFileList { get; }
         public BoxClient()
         {
             BoxHttpClient = new HttpClient();
-            UploadFileList = new List<UploadFile>();
+            UploadFileList = new List<UploadedFile>();
         }
 
         public async void UploadFileAsync(StorageFile file)

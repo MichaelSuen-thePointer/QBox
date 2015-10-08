@@ -29,14 +29,11 @@ namespace QBox
     public sealed partial class MainPage : Page
     {
         public static MainPage Current;
-        public ObservableCollection<UploadFile> UploadFileList { get; set; } = new ObservableCollection<UploadFile>();
+        public ObservableCollection<UploadedFile> UploadFileList { get; set; } = new ObservableCollection<UploadedFile>();
         public ObservableCollection<DownloadFile> DownloadFileList { get; set; } = new ObservableCollection<DownloadFile>();
         public readonly HttpClient BoxClient = new HttpClient();
 
-        public List<PageItem> Pages
-        {
-            get { return this.pages; }
-        }
+        public List<PageItem> Pages => this.pages;
 
         public MainPage()
         {
@@ -79,6 +76,11 @@ namespace QBox
 
         public void NotifyUser(string strMessage, NotifyType type)
         {
+
+
+
+
+
             switch (type)
             {
                 case NotifyType.StatusMessage:
@@ -91,8 +93,8 @@ namespace QBox
             StatusBlock.Text = strMessage;
 
             // Collapse the StatusBlock if it has no text to conserve real estate.
-            StatusBorder.Visibility = (StatusBlock.Text != String.Empty) ? Visibility.Visible : Visibility.Collapsed;
-            if (StatusBlock.Text != String.Empty)
+            StatusBorder.Visibility = (StatusBlock.Text != string.Empty) ? Visibility.Visible : Visibility.Collapsed;
+            if (StatusBlock.Text != string.Empty)
             {
                 StatusBorder.Visibility = Visibility.Visible;
                 StatusPanel.Visibility = Visibility.Visible;
@@ -103,13 +105,6 @@ namespace QBox
                 StatusPanel.Visibility = Visibility.Collapsed;
             }
         }
-
-        public async void OnSuspending(object sender, SuspendingEventArgs args)
-        {
-            
-        }
-
-        
     }
 
     public enum NotifyType

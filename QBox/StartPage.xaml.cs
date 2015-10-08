@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -79,48 +81,14 @@ namespace QBox
             openPicker.FileTypeFilter.Clear();
             openPicker.FileTypeFilter.Add("*");
             var file = await openPicker.PickSingleFileAsync();
-            IProgress<HttpProgress> progress = new Progress<HttpProgress>(UploadProgressHandler);
-            try
-            {
-                var fileContent = await file.OpenAsync(FileAccessMode.Read);
-                ButtonStateControl(PageState.Uploading);
-                HttpStreamContent fileStream = new HttpStreamContent(fileContent);
-                HttpMultipartFormDataContent formData = new HttpMultipartFormDataContent { { fileStream, "file", file.Path } };
-                var asyncTask = rootPage.BoxClient.PostAsync(new Uri(boxUploadUrl), formData).AsTask(cancellationToken.Token, progress);
-                try
-                {
-                    rootPage.NotifyUser("正在上传", NotifyType.StatusMessage);
-                    var responseMessage = await asyncTask;
-                    var result = await ResponseParser.ParseUploadResponseAsync(responseMessage.Content);
-                    var newFile = new UploadFile(file, DateTime.Now, result.SecureId, result.Token, result.Expiration);
-                    rootPage.UploadFileList.Add(newFile);
-                }
-                catch (TaskCanceledException)
-                {
-                    rootPage.NotifyUser("上传已被终止", NotifyType.ErrorMessage);
-                }
-                catch (Exception ex)
-                {
-                    rootPage.NotifyUser("错误：" + ex.Message, NotifyType.ErrorMessage);
-                }
-                finally
-                {
-                    Progress.Value = 0;
-                    ButtonStateControl(PageState.Nothing);
-                }
-                rootPage.NotifyUser("上传成功，信息已保存在已上传列表中", NotifyType.StatusMessage);
-                ButtonStateControl(PageState.Uploaded);
-            }
-            catch (NullReferenceException)
-            {
-                
-            }
+            await UploadFile(file);
         }
 
         private void UploadProgressHandler(HttpProgress progress)
         {
             if (progress.TotalBytesToSend == null) return;
             Progress.Value = (100.0 * progress.BytesSent / progress.TotalBytesToSend) ?? 0;
+            BytesReceived.Text = $"已上传: {(100.0 * progress.BytesSent / progress.TotalBytesToSend),3}%";
         }
 
         private void DownloadProgressHandler(HttpProgress progress)
@@ -301,6 +269,84 @@ namespace QBox
 
                 }
             }
+        }
+
+        private async void Grid_Drop(object sender, DragEventArgs e)
+        {
+            var elements = await e.DataView.GetStorageItemsAsync();
+            foreach (var file in elements)
+            {
+                if (file != null)
+                {
+                    await UploadFile(file as StorageFile);
+                    Task.Delay(500);
+                }
+            }
+        }
+
+        private async Task UploadFile(IStorageFile file)
+        {
+            IProgress<HttpProgress> progress = new Progress<HttpProgress>(UploadProgressHandler);
+            try
+            {
+                var fileContent = await file.OpenAsync(FileAccessMode.Read);
+                ButtonStateControl(PageState.Uploading);
+                var fileStream = new HttpStreamContent(fileContent);
+                HttpMultipartFormDataContent formData = new HttpMultipartFormDataContent { { fileStream, "file", file.Path } };
+                var asyncTask = rootPage.BoxClient.PostAsync(new Uri(boxUploadUrl), formData).AsTask(cancellationToken.Token, progress);
+                ResponseParser.UploadResponse result;
+                try
+                {
+                    rootPage.NotifyUser("正在上传", NotifyType.StatusMessage);
+                    var responseMessage = await asyncTask;
+                    Debugger.Break();
+                    result = await ResponseParser.ParseUploadResponseAsync(responseMessage.Content);
+                    var newFile = new UploadedFile(file, DateTime.Now, result.SecureId, result.Token, result.Expiration);
+                    rootPage.UploadFileList.Add(newFile);
+                    rootPage.NotifyUser("上传成功，信息已保存在已上传列表中", NotifyType.StatusMessage);
+                    Debugger.Break();
+                    ButtonStateControl(PageState.Uploaded);
+                }
+                catch (TaskCanceledException)
+                {
+                    rootPage.NotifyUser("上传已被终止", NotifyType.ErrorMessage);
+                }
+                catch (Exception ex)
+                {
+                    rootPage.NotifyUser("错误：" + ex.Message, NotifyType.ErrorMessage);
+                    Debugger.Break();
+                }
+                finally
+                {
+                    Progress.Value = 0;
+                    ButtonStateControl(PageState.Nothing);
+                }
+            }
+            catch (NullReferenceException)
+            {
+
+            }
+        }
+
+        private void Grid_OnDragOver(object sender, DragEventArgs e)
+        {
+            //设置操作类型
+            e.AcceptedOperation = DataPackageOperation.Copy;
+
+            //设置提示文字
+            e.DragUIOverride.Caption = "拖放此处即可添加文件 o(^▽^)o";
+
+            ////是否显示拖放时的文字 默认为true
+            //e.DragUIOverride.IsCaptionVisible = true;
+
+            ////是否显示文件图标，默认为true
+            //e.DragUIOverride.IsContentVisible = true;
+
+            ////Caption 前面的图标是否显示。默认为 true
+            //e.DragUIOverride.IsGlyphVisible = true;
+
+            ////自定义文件图标，可以设置一个图标
+            //e.DragUIOverride.SetContentFromBitmapImage(new BitmapImage(new Uri("ms-appx:///Assets/copy.jpg")));
         }
     }
 }

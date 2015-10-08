@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <ListBox x:Name="UploadedItems" Grid.Row="0" >
             <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="local:UploadFile">
+                <DataTemplate x:DataType="local:UploadedFile">
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <SymbolIcon Symbol="OpenFile" Margin="0,0,12,0"/>
                         <StackPanel Orientation="Horizontal">

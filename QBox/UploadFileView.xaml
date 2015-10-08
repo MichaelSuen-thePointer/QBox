@@ -13,13 +13,13 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto" MinHeight="195"></RowDefinition>
         </Grid.RowDefinitions>
         <ListBox x:Name="UploadedItems" Grid.Row="0" ItemsSource="{x:Bind rootPage.UploadFileList}"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
                  SelectionChanged="UploadedItems_OnSelectionChanged_SelectionChanged">
             <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="local:UploadFile">
+                <DataTemplate x:DataType="local:UploadedFile">
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <SymbolIcon Symbol="OpenFile" Margin="0,0,12,0"/>
                         <StackPanel Orientation="Horizontal">

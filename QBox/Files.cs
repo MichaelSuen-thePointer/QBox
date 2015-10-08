@@ -69,7 +69,7 @@ namespace QBox
         }
     }
 
-    public class UploadFile
+    public class UploadedFile
     {
         public readonly string FileName;
         public readonly DateTime UploadTime;
@@ -77,7 +77,7 @@ namespace QBox
         public string Token { get; private set; }
         public FileExpiration Expiration { get; private set; }
 
-        public UploadFile(StorageFile file, DateTime uploadTime, string secureId, string token, FileExpiration expiration )
+        public UploadedFile(IStorageFile file, DateTime uploadTime, string secureId, string token, FileExpiration expiration )
         {
             FileName = file.Name;
             UploadTime = uploadTime;
@@ -86,7 +86,7 @@ namespace QBox
             Expiration = expiration;
         }
 
-        public UploadFile(string fileName, DateTime uploadTime, string secureId, string token, FileExpiration expiration)
+        public UploadedFile(string fileName, DateTime uploadTime, string secureId, string token, FileExpiration expiration)
         {
             FileName = fileName;
             UploadTime = uploadTime;
@@ -180,14 +180,14 @@ namespace QBox
 /*
     public static class FileListExtension
     {
-        public static int AddEntry(this List<UploadFile> fileList, StorageFile file, DateTime uploadTime, IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> operation)
+        public static int AddEntry(this List<UploadedFile> fileList, StorageFile file, DateTime uploadTime, IAsyncOperationWithProgress<HttpResponseMessage, HttpProgress> operation)
         {
-            var newEntry = new UploadFile(file, uploadTime, operation);
+            var newEntry = new UploadedFile(file, uploadTime, operation);
             fileList.Add(newEntry);
             return fileList.Count() - 1;
         }
 
-        public static void ClearExpired(this List<UploadFile> fileList)
+        public static void ClearExpired(this List<UploadedFile> fileList)
         {
             foreach (var element in fileList.Where(element => element.IsExpired()))
             {

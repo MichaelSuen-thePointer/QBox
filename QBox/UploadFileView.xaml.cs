@@ -58,11 +58,11 @@ namespace QBox
         private void UploadedItems_OnSelectionChanged_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListBox listBox = sender as ListBox;
-            UploadFile item = listBox.SelectedItem as UploadFile;
+            UploadedFile item = listBox.SelectedItem as UploadedFile;
             UpdateEditView(item);
         }
 
-        private void UpdateEditView(UploadFile file)
+        private void UpdateEditView(UploadedFile file)
         {
             if (file == null)
             {
@@ -108,7 +108,7 @@ namespace QBox
             {
                 rootPage.NotifyUser("必须输入提取码，不修改提取码请输入原来的", NotifyType.ErrorMessage);
             }
-            UploadFile choseFile = UploadedItems.SelectedItem as UploadFile;
+            UploadedFile choseFile = UploadedItems.SelectedItem as UploadedFile;
             List < KeyValuePair < string, string>> requestContents = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("new_token", NewTokenBox.Text),
@@ -126,7 +126,7 @@ namespace QBox
                     await ResponseParser.ParseEditResponseAsync(responseMessage.Content);
                 if (response.ErrorCode == 0)
                 {
-                    UploadFile changedFile = new UploadFile(choseFile.FileName, choseFile.UploadTime, choseFile.SecureId, NewTokenBox.Text, new FileExpiration(newExpiration));
+                    UploadedFile changedFile = new UploadedFile(choseFile.FileName, choseFile.UploadTime, choseFile.SecureId, NewTokenBox.Text, new FileExpiration(newExpiration));
                     rootPage.UploadFileList.Remove(choseFile);
                     rootPage.UploadFileList.Add(changedFile);
                     rootPage.NotifyUser("修改成功", NotifyType.ErrorMessage);
