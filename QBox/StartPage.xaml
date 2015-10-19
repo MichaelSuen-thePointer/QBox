@@ -1,0 +1,57 @@
+﻿<Page
+    x:Class="QBox.StartPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QBox"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Drop="Grid_Drop" AllowDrop="True">
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" AllowDrop="True" Drop="Grid_Drop" DragOver="Grid_OnDragOver">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0">
+            <TextBlock Margin ="0,10,0,10" VerticalAlignment="Top" HorizontalAlignment="Center">
+                选取文件
+            </TextBlock>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button x:Name="UploadButton" Content="上传" Style = "{StaticResource TextBlockButtonStyle}" Margin="0,0,0,0" HorizontalAlignment="Right" FontSize="48" Click="UploadButton_Click"/>
+                    <Button x:Name="CancelUploadButton" Content="取消" Style = "{StaticResource TextBlockButtonStyle}" Margin="0,0,0,0" HorizontalAlignment="Left" FontSize="48" Click="CancelUploadButton_Click" />
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+
+        <StackPanel Grid.Row="1">
+            <TextBlock Margin ="0,10,0,10" VerticalAlignment="Top" HorizontalAlignment="Center">
+                输入文件代号
+            </TextBlock>
+            <TextBox x:Name = "TokenBox" HorizontalAlignment="Center" MinWidth="200" Style="{StaticResource AutoSuggestBoxTextBoxStyle}"></TextBox>
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" x:Name="DownloadButton" Content="下载" Style = "{StaticResource TextBlockButtonStyle}" Margin="0,0,0,0" HorizontalAlignment="Right" FontSize="48" Click="DownloadButton_Click"/>
+                    <Button Grid.Column="1" x:Name="CancelDownladButton" Content="取消" Style = "{StaticResource TextBlockButtonStyle}" Margin="0,0,0,0" HorizontalAlignment="center" FontSize="48" Click="CancelDownladButton_Click"/>
+                    <Button Grid.Column="2" x:Name="SaveButton" Content="保存" Style = "{StaticResource TextBlockButtonStyle}" Margin="0,0,0,0" HorizontalAlignment="Left" FontSize="48" Click="SaveButton_Click"/>
+
+                </Grid>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="2">
+            <TextBlock Text ="当前进度：" Margin ="0,10,0,10" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            <ProgressBar x:Name="Progress" Margin="0,10,0,10" HorizontalAlignment="Center" MinHeight="30" MinWidth="200"></ProgressBar>
+            <TextBlock x:Name ="BytesReceived" Text ="" Margin ="0,10,0,10" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Page>

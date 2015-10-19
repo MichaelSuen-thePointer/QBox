@@ -299,12 +299,10 @@ namespace QBox
                 {
                     rootPage.NotifyUser("正在上传", NotifyType.StatusMessage);
                     var responseMessage = await asyncTask;
-                    Debugger.Break();
                     result = await ResponseParser.ParseUploadResponseAsync(responseMessage.Content);
                     var newFile = new UploadedFile(file, DateTime.Now, result.SecureId, result.Token, result.Expiration);
                     rootPage.UploadFileList.Add(newFile);
                     rootPage.NotifyUser("上传成功，信息已保存在已上传列表中", NotifyType.StatusMessage);
-                    Debugger.Break();
                     ButtonStateControl(PageState.Uploaded);
                 }
                 catch (TaskCanceledException)
@@ -314,7 +312,6 @@ namespace QBox
                 catch (Exception ex)
                 {
                     rootPage.NotifyUser("错误：" + ex.Message, NotifyType.ErrorMessage);
-                    Debugger.Break();
                 }
                 finally
                 {

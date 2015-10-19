@@ -69,7 +69,7 @@ namespace QBox
                 }
 
                 // 将框架放在当前窗口中
-                Window.Current.Content = rootFrame;
+                Window.Current.Content = rootFrame;  
             }
 
             if (rootFrame.Content == null)
